@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('student', function (Blueprint $table) {
-            $table->id();
-            $table->string('studentname');
-            $table->string('mobileno');
-            $table->string('courses');
-            $table->string('gender');
-            $table->timestamps();
+        Schema::table('student', function (Blueprint $table) {
+            //
+            $table->string('email');
         });
     }
 
@@ -26,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('student');
+        Schema::table('student', function (Blueprint $table) {
+            //
+             $table->dropColumn('email');
+        });
     }
 };

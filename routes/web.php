@@ -3,11 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Usercontroller; // Usercontroller ko import karna hai
 use App\Http\Controllers\studentcontroller; // studentcontroller ko import karna hai
+use App\Http\Controllers\Authcontroller; // studentcontroller ko import karna hai
+use App\Http\Controllers\Dashboardcontroller; // studentcontroller ko import karna hai
+use App\Http\Controllers\UserAuthcontroller;
+use App\Http\Controllers\EmployeeApicontroller; // studentcontroller ko import karna hai
+
 //use GuzzleHttp\Psr7\Request;
 use Illuminate\Http\Request;      // ← यहाँ जोड़ें
-
-
-
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +23,7 @@ use Illuminate\Http\Request;      // ← यहाँ जोड़ें
 |
 */
 
-Route::get('/', function () {
+Route::get('/kk', function () {
     return view('welcome');// ye view ko welcome page pe redirect karega
 });
 
@@ -87,7 +90,46 @@ Route::get('put-session',function(Request $req){
 
 
 Route::view('/studentform','studentform');
-Route::post('/addstudent',[Usercontroller::class,'studentdata'])->name('add.student');
+
+Route::post('/addstudent', [UserController::class, 'studentdata'])->name('addstudent');
+Route::get('data', [Usercontroller::class, 'studenttable'])->name('student.data');
+Route::get('/del/{id}', [Usercontroller::class, 'delete_student'])->name('delete.student');
+
+
+//login
+
+// Route::get('ab',[Authcontroller::class,'user_login'])->middleware('guest');
+// Route::get('register',[Authcontroller::class,'register']);
+// Route::post('login',[Authcontroller::class,'auth'])->middleware('guest');
+// Route::get('dashboard',action: [Dashboardcontroller::class,'color'])->middleware('userAuth');
+// Route::get('logout',action: [Dashboardcontroller::class,'logout']);
+
+
+//new login
+
+Route::get('register',[UserAuthcontroller::class,'showregister']);
+Route::post('register',[UserAuthcontroller::class,'register']);
+
+Route::get('login',[UserAuthcontroller::class,'showlogin'])->middleware('guest');
+Route::post('login',[UserAuthcontroller::class,'login'])->middleware('guest');
+
+Route::get('dashboard',[UserAuthcontroller::class,'dashboard'])->middleware('auth');
+Route::post('logout',[UserAuthcontroller::class,'logout'])->middleware('auth');
+// web.php
+Route::post('task/store', [UserAuthcontroller::class, 'store'])->middleware('auth');
+// web.php
+Route::post('task/complete/{id}', [UserAuthcontroller::class, 'markComplete'])->middleware('auth');
+
+
+//registration
+// Route::view('regi','form_student');
+// Route::post('/addst', [UserController::class, 'studentregister'])->name('addst');
+// Route::get('/views', [Usercontroller::class, 'view_student'])->name('views');
+// Route::get('/edits/{id}', [Usercontroller::class, 'edits_student'])->name('edits.student');
+// Route::post('/updates/{id}', [Usercontroller::class, 'update_student'])->name('update.student');
+
+
+
 
 
 

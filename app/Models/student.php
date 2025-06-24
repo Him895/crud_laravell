@@ -16,10 +16,9 @@ class student extends Model
         'mobileno',
         'courses',
         'gender',
+        'date',
     ];
 
-    protected $casts = [
-         'courses' => 'array', // Cast hobbies to an array
-    ];
+
     use HasFactory;
 }

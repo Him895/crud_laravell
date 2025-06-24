@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User; // Import the User model
 use App\Models\Employee; // Import the Employee model
+use App\Models\Student;
+use App\Models\Student_register;
+
 
 
 class Usercontroller extends Controller
@@ -58,7 +61,7 @@ function add(){
     $user->city = $req->city;
     $user->gender = $req->gender;
     $user->hobbies = json_encode($req->hobbies); // Convert hobbies array to JSON
-    $user->save(); //ORM method hai ye data ko database me save karega
+    $user->save(); //ORM method hai ye student ko database me save karega
     return redirect()->route('user.form')->with('success', 'User added successfully!');
 
 }
@@ -116,51 +119,51 @@ function store(Request $req){
 
 ]);
 
-$employee = new Employee;
-    $employee->name = $req->username;
-    $employee->email = $req->email;
-    $employee->city = $req->city;
-    $employee->gender = $req->gender;
-    $employee->hobbies = json_encode($req->hobbies); // Convert hobbies array to JSON
-    $employee->save(); //ORM method hai ye data ko database me save karega
-    return redirect('/view');
+// $student = new Employee;
+//     $student->name = $req->username;
+//     $student->email = $req->email;
+//     $student->city = $req->city;
+//     $student->gender = $req->gender;
+//     $student->hobbies = json_encode($req->hobbies); // Convert hobbies array to JSON
+//     $student->save(); //ORM method hai ye student ko database me save karega
+//     return redirect('/view');
 
 }
 function view_employee(){
-$employee = Employee::all(); //database me jitna data hai wo sab fetch ho jayega
-$data = compact('employee');
+$student = Employee::all(); //database me jitna student hai wo sab fetch ho jayega
+$student = compact('student');
 
 
-    return view('view-data')->with($data);
+    return view('view-student')->with($student);
 
 
 }
 function edit_employee($id){
-    $employee = Employee::find($id);
-    if(!is_null($employee)){
-        $data = compact('employee');
-        return view('/employeeform')->with($data);
+    $student = Employee::find($id);
+    if(!is_null($student)){
+        $student = compact('student');
+        return view('/employeeform')->with($student);
     }else{
         return redirect('/view')->with('error', 'Employee not found!');
     }
 }
 
 function update_employee($id, Request $req){
-    $employee = Employee::find($id);
+    $student = Employee::find($id);
 
-    $employee->name = $req->username;
-    $employee->email = $req->email;
-    $employee->city = $req->city;
-    $employee->gender = $req->gender;
-    $employee->hobbies = json_encode($req->hobbies); // Convert hobbies array to JSON
-    $employee->save(); //ORM m
+    $student->name = $req->username;
+    $student->email = $req->email;
+    $student->city = $req->city;
+    $student->gender = $req->gender;
+    $student->hobbies = json_encode($req->hobbies); // Convert hobbies array to JSON
+    $student->save(); //ORM m
     return redirect('/view')->with('success', 'Employee updated successfully!');
 
 }
 function delete_employee($id){
-    $employee = Employee::find($id);
-    if ($employee) {
-        $employee->delete();
+    $student = Employee::find($id);
+    if ($student) {
+        $student->delete();
         return redirect()->back();
     } else {
         return redirect('')->back();
@@ -169,19 +172,126 @@ function delete_employee($id){
 
 
 function studentdata (Request $req){
-     $req->validate([
-        'studentname' => 'req|min:3|max:25',
-        'mobileno' => 'req|min:10',
-        'email' => 'req|email',
-        'courses' => 'req|array',
-        'date'=> 'req|',
+
+   $student= $req->validate([
+  'studentname' => 'required|min:3|max:25',
+  'mobileno'    => 'required|min:10',
+  'email'       => 'required|email',
+  'courses'     => 'required',
+  'date'        => 'required',
+
+
+
      ]);
 
+
+
+
+
+     $student = new Student;
+
+      $student->studentname = $req->studentname;
+    $student->email = $req->email;
+    $student->mobileno =$req->mobileno;
+    $student->gender = $req->gender;
+    $student->courses = $req->courses;
+    $student->date = $req->date;
+    $student->save(); //ORM method hai ye student ko database me save karega
+
+    return redirect()->route('student.student')->with('success', 'User added successfully!');
+
+}
+
+function studenttable(){
+$student = student::all(); //database me jitna student hai wo sab fetch ho jayega
+$student = compact('student');
+
+
+    return view('view_student_data')->with($student);
+
+
+}
+public function delete_student($id)
+{
+    $student = Student::find($id);
+    if ($student) {
+        $student->delete();
+        return redirect()->back()->with('success', 'Student deleted successfully!');
+    } else {
+        return redirect()->back()->with('error', 'Student not found.');
+    }
+}
+
+public function studentregister(Request $req){
+       $req->validate([
+        'name'=> 'required|min:3|max:20',
+        'email' => 'required|email',
+        'mobileno'=>'required|max:10',
+        'doj' =>'required',
+        'gender' => 'required|in:male,female',
+       ],[
+        'name.required'=> 'name is required',
+        'email.required'=> 'Email must be required',
+        'mobileno.requred'=> 'Mobile no must b 10 digit',
+        'doj.required'=> 'Date of joining must be required',
+        'gender.required'=> 'please select gender',
+       ]);
+
+       $student = new Student_register;
+        $student->name = $req->name;
+        $student->email =$req->email;
+        $student->mobileno = $req->mobileno;
+        $student->doj = $req->doj;
+        $student->gender =$req->gender;
+        $student-> save();
+
+        return redirect('views')->with('success','student inserted successfully');
+}
+
+function view_student(){
+$student = Student_register::all(); //database me jitna student hai wo sab fetch ho jayega
+$student = compact('student');
+
+
+    return view('view_data_student')->with($student);
+
+
+}
+
+
+function edits_student($id){
+    $student = Student_register::find($id);
+    if(!is_null($student)){
+        $datas = compact('student');
+        return view('form_student')->with($datas);
+    }else{
+        return redirect('/views')->with('error', 'Employee not found!');
+    }
+}
+
+
+function update_student($id, Request $req){
+    $student = Student_register::find($id);
+
+    $student->name = $req->name;
+    $student->email = $req->email;
+    $student->mobileno = $req->mobileno;
+    $student->gender = $req->gender;
+    $student->doj = $req->doj;
+    $student->save(); //ORM m
+    return redirect('/views')->with('success', 'Employee updated successfully!');
+
+
+
+
+
+
+
+
 }
 
 }
 
 
-
-
+///registration
 
